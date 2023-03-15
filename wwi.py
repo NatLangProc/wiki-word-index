@@ -8,6 +8,7 @@ import spacy as spacy
 config = configparser.ConfigParser()
 config.read('wwi.ini')
 wikiLang = config['locale']['lang']
+jobRenew = int(config['jobs']['renew'])
 
 if wikiLang == "en":
     spacy_name = wikiLang + '_core_web_md'
@@ -152,6 +153,7 @@ def init_tables(connection):
 
 
 conn = connect_wiki()
-drop_and_create_tables(conn)
-init_tables(conn)
+if jobRenew:
+    drop_and_create_tables(conn)
+    init_tables(conn)
 conn.close()

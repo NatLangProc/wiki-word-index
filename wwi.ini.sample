@@ -1,11 +1,16 @@
 Some possible examples o www.ini file:
 
+renew: 0:continue indexing; 1=delete and create tables
+
 [credentials]
 user=andy
 password = mypass478dfg
 
 [locale]
 lang=en
+
+[jobs]
+renew=1
 
 //---------------------------
 [credentials]
@@ -14,3 +19,6 @@ password = fsdlkf3r
 
 [locale]
 lang=pl
+
+[jobs]
+renew=0
