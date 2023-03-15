@@ -1,3 +1,4 @@
+import csv
 import os
 from mysql.connector import connect
 from getpass import getpass
@@ -93,9 +94,20 @@ def drop_and_create_tables(conn):
             cursor.execute(stmt)
 
 
+def init_pos_table(connection):
+    rows = []
+    with open("postable.csv", newline="") as f:
+        reader = csv.reader(f, delimiter=";", quoting=csv.QUOTE_NONE)
+        for row in reader:
+            rows.append(row)
 
-def init_tables(connect):
-    pass
+    with connection.cursor() as cursor:
+        stmt = "insert into pos (id,spacy,description) VALUES (%s, %s, %s)"
+        cursor.executemany(stmt, rows)
+        connection.commit()
+
+def init_tables(connection):
+    init_pos_table(connection)
 
 connection = connect_wiki()
 drop_and_create_tables(connection)
