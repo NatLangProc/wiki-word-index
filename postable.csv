@@ -1,0 +1,23 @@
+id;spacy;desc
+1;ADJ;Adjective
+2;ADP;Preposition
+3;ADV;Adverb
+4;AUX;Auxiliary
+5;CCONJ;CConjunction
+6;CONJ;Conjunction
+7;CONTR;Contraction
+8;DET;Determiner
+9;INFIX;Infix
+10;INTJ;Interjection
+11;NOUN;Noun
+12;NUM;Numeral
+13;PART;Particle
+14;PRON;Pronoun
+15;PROPN;Proper noun
+16;PUNCT;Punctuation mark
+17;SCONJ;SConjunction
+18;SPACE;Space
+19;SYM;Symbol
+20;VERB;Verb
+21;X;Other
+100;LONG;Long

@@ -1,6 +1,5 @@
 import os
 
-fix smafrom mysql.connector import connect
 from getpass import getpass
 import configparser
 import spacy as spacy
@@ -46,7 +45,7 @@ def read_credentials():
 
 def connect_wiki():
     credentials = read_credentials()
-    return connect(
+    return connection(
         host="localhost",
         user=credentials[0],
         password=credentials[1],
@@ -95,4 +94,11 @@ def drop_and_create_tables(conn):
 
 connection = connect_wiki()
 drop_and_create_tables(connection)
+
+
+def init_tables(connect):
+    pass
+
+
+init_tables(connection)
 connection.close()
