@@ -1,10 +1,13 @@
 import os
-
+from mysql.connector import connect
 from getpass import getpass
 import configparser
 import spacy as spacy
 
-wikiLang = "en"
+config = configparser.ConfigParser()
+config.read('wwi.ini')
+wikiLang = config['locale']['lang']
+
 if wikiLang == "en":
     spacy_name = wikiLang + '_core_web_md'
 else:
@@ -26,8 +29,6 @@ def safe_spacy_load():
 
 
 def read_credentials():
-    config = configparser.ConfigParser()
-    config.read('wwi.ini')
     if 'user' in config['credentials']:
         user = config['credentials']['user']
     else:
@@ -45,7 +46,7 @@ def read_credentials():
 
 def connect_wiki():
     credentials = read_credentials()
-    return connection(
+    return connect(
         host="localhost",
         user=credentials[0],
         password=credentials[1],
@@ -92,13 +93,11 @@ def drop_and_create_tables(conn):
             cursor.execute(stmt)
 
 
-connection = connect_wiki()
-drop_and_create_tables(connection)
-
 
 def init_tables(connect):
     pass
 
-
+connection = connect_wiki()
+drop_and_create_tables(connection)
 init_tables(connection)
 connection.close()

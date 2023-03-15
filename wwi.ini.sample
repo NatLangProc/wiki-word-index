@@ -1,0 +1,16 @@
+Some possible examples o www.ini file:
+
+[credentials]
+user=andy
+password = mypass478dfg
+
+[locale]
+lang=en
+
+//---------------------------
+[credentials]
+user=andrzej
+password = fsdlkf3r
+
+[locale]
+lang=pl
