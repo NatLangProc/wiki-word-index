@@ -1,6 +1,7 @@
 Some possible examples o www.ini file:
 
 renew: 0:continue indexing; 1=delete and create tables
+data: 'from' included 'to' excluded
 
 [credentials]
 user=andy
@@ -12,6 +13,10 @@ lang=en
 [jobs]
 renew=1
 
+[data]
+from=100000
+to=101000
+
 //---------------------------
 [credentials]
 user=andrzej
@@ -22,3 +27,7 @@ lang=pl
 
 [jobs]
 renew=0
+
+[data]
+from=0
+to=1000
