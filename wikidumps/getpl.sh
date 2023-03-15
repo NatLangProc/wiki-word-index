@@ -1,0 +1,1 @@
+./getparam.sh pl
