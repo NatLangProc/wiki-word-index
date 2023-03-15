@@ -68,7 +68,7 @@ def getSqlFromFile(path):
         sql_list.append(sql)
     return sql_list
 
-def create_tables(connection):
+def drop_and_create_tables(connection):
     dir = 'sql/tables'
     dirlist = os.listdir(dir)
     # Tables have constraints so drop and create must be in specified order
@@ -90,5 +90,5 @@ def create_tables(connection):
 
 
 connection = connectWiki()
-create_tables(connection)
+drop_and_create_tables(connection)
 connection.close()
