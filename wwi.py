@@ -73,7 +73,7 @@ def get_sql_from_file(path):
     return sql_list
 
 
-def drop_and_create_tables(conn):
+def drop_and_create_tables(connection):
     directory = 'sql/tables'
     dirlist = os.listdir(directory)
     # Tables have constraints so drop and create must be in specified order
@@ -82,7 +82,7 @@ def drop_and_create_tables(conn):
         if not filename.endswith('.sql'):
             continue
         stmt = get_sql_from_file(directory + '/' + filename)[0]
-        with conn.cursor() as cursor:
+        with connection.cursor() as cursor:
             cursor.execute(stmt)
 
     dirlist.sort()
@@ -90,13 +90,13 @@ def drop_and_create_tables(conn):
         if not filename.endswith('.sql'):
             continue
         stmt = get_sql_from_file(directory + '/' + filename)[1]
-        with conn.cursor() as cursor:
+        with connection.cursor() as cursor:
             cursor.execute(stmt)
 
 
 def init_pos_table(connection):
     rows = []
-    with open("postable.csv", newline="") as f:
+    with open("pos_table.csv", newline="") as f:
         reader = csv.reader(f, delimiter=";", quoting=csv.QUOTE_NONE)
         for row in reader:
             rows.append(row)
@@ -106,10 +106,52 @@ def init_pos_table(connection):
         cursor.executemany(stmt, rows)
         connection.commit()
 
+
+def read_index(wiki_filename, index_filename):
+    index = []
+    file = open(index_filename, 'r')
+    line = file.readline().rstrip()
+    start = int(line.split(':')[0])
+    end = start
+    counter = 0
+    while True:
+        line = file.readline().rstrip()
+        if not line:
+            break
+        offset = int(line.split(':')[0])
+        if offset > end:
+            start = end
+            end = offset
+            index.append((counter, start, end))
+            if counter % 2000 == 0:
+                print('.', end="")
+            counter += 1
+            # if counter > limit:
+            #      break
+    file.close()
+    start = end
+    end = os.stat(wiki_filename).st_size
+    index.append((counter, start, end))
+    return index
+
+
+def init_blocks_table(connection):
+    with connection.cursor() as cursor:
+        cursor.execute("truncate table blocks")
+        wiki_filename = 'wikidumps/' + wikiLang + 'wiki-latest-pages-articles-multistream.xml.bz2'
+        index_filename = 'wikidumps/' + wikiLang + 'wiki-latest-pages-articles-multistream-index.txt'
+        data = read_index(wiki_filename, index_filename)
+        stmt = "INSERT INTO blocks (number,start,end) VALUES (%s, %s, %s)"
+        cursor.executemany(stmt, data)
+        connection.commit()
+
+
 def init_tables(connection):
     init_pos_table(connection)
+    init_blocks_table(connection)
 
-connection = connect_wiki()
-drop_and_create_tables(connection)
-init_tables(connection)
-connection.close()
+
+conn = connect_wiki()
+drop_and_create_tables(conn)
+init_tables(conn)
+conn.close()
