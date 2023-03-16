@@ -12,7 +12,8 @@ import spacy as spacy
 config = configparser.ConfigParser()
 config.read('wwi.ini')
 wikiLang = config['locale']['lang']
-jobRenew = int(config['jobs']['renew'])
+jobRenewStruct = int(config['jobs']['renew_struct'])
+jobRenewData = int(config['jobs']['renew_data'])
 data_from = int(config['data']['from'])
 data_to = int(config['data']['to'])
 
@@ -167,12 +168,18 @@ def init_tables(connection):
     init_pos_table(connection)
     init_blocks_table(connection)
 
-
-conn = connect_wiki()
-if jobRenew:
-    drop_and_create_tables(conn)
-    init_tables(conn)
-
+def reset(connection):
+    with connection.cursor() as cursor:
+        cursor.execute("SET FOREIGN_KEY_CHECKS = 0")
+        cursor.execute("truncate table pages")
+        cursor.execute("truncate table words")
+        cursor.execute("truncate table bwords")
+        cursor.execute("truncate table words_pages")
+        cursor.execute("truncate table bwords_pages")
+        cursor.execute("SET FOREIGN_KEY_CHECKS = 1")
+        cursor.execute("update blocks set processed=0,proctime=NULL,sqltime=0,words=NULL"+
+                       ",sum=NULL,newwords=NULL,maxlen=NULL")
+        connection.commit()
 
 def fill_pos_dictionaries(connection):
     with connection.cursor() as cursor:
@@ -346,6 +353,11 @@ def process_wiki(connection):
             print('spacy time:', elapsed_time, 'seconds')
             freq_to_db(connection, freq, number, elapsed_time)
 
-
+conn = connect_wiki()
+if jobRenewStruct:
+    drop_and_create_tables(conn)
+    init_tables(conn)
+elif jobRenewData:
+    reset(conn)
 process_wiki(conn)
 conn.close()

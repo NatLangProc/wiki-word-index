@@ -11,7 +11,8 @@ password = mypass478dfg
 lang=en
 
 [jobs]
-renew=1
+renew_struct=0
+renew_data=1
 
 [data]
 from=100000
@@ -26,7 +27,8 @@ password = fsdlkf3r
 lang=pl
 
 [jobs]
-renew=0
+renew_struct=0
+renew_data=0
 
 [data]
 from=0
