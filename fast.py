@@ -40,9 +40,12 @@ for n, (start, end) in enumerate(zip(sorted_offsets, sorted_offsets[1:])):
             if ch.isalpha():
                 word += ch
             else:
-                word_count[word] += 1
+                if len(word)>0:
+                    word_count[word] += 1
                 sum_words += 1
                 word = ''
+        if len(word) > 0:
+            word_count[word] += 1
     end_block_timestamp = time.time()
     print('{}/{}. {}-{}={}. time={:.3}s({}s). words={}. sum words={} mln. mem={}kB'.format(
           n, total, end, start, length, end_block_timestamp-start_block_timestamp,
