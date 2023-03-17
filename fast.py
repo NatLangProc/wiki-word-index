@@ -8,13 +8,6 @@ import sys
 import time
 import xml.etree.ElementTree as et
 
-
-POLISH_LETTERS = ['a', 'ą', 'b', 'c', 'ć', 'd', 'e', 'ę', 'f', 'g', 'h', 'i', 'j', 'k',
-                  'l', 'ł', 'm', 'n', 'ń', 'o', 'ó', 'p', 'q', 'r', 's', 'ś', 't', 'u',
-                  'v', 'w', 'x', 'y', 'z', 'ź', 'ż', 'A', 'Ą', 'B', 'C', 'Ć', 'D', 'E',
-                  'Ę', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'Ł', 'M', 'N', 'Ń', 'O', 'Ó',
-                  'P', 'Q', 'R', 'S', 'Ś', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z', 'Ź', 'Ż']
-
 idx_filename = sys.argv[1]
 path_name = idx_filename.rsplit('/',1)
 dat_filename = path_name[0]+'/'+path_name[1].replace('-index', '',).replace('txt', 'xml')
@@ -46,7 +39,7 @@ for n, (start, end) in enumerate(zip(sorted_offsets, sorted_offsets[1:])):
         article_body = page_obj.find('revision').find('text').text
         word = ''
         for ch in article_body:
-            if ch in POLISH_LETTERS:
+            if ch.isalpha():
                 word += ch
             else:
                 word_count[word] += 1
