@@ -23,8 +23,9 @@ total = len(sorted_offsets)
 word_count = collections.defaultdict(int)
 f = open(dat_filename, mode='rb')
 sum_words = 0
+limit = 1e6*float(sys.argv[2])
 for n, (start, end) in enumerate(zip(sorted_offsets, sorted_offsets[1:])):
-    if sum_words >= 100e6:
+    if sum_words >= limit:
         break
     length = end - start
     prev_timestamp = timestamp
