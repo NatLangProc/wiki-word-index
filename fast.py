@@ -6,6 +6,7 @@ import csv
 import sys
 import time
 import xml.etree.ElementTree as Et
+import filter
 
 idx_filename = sys.argv[1]
 path_name = idx_filename.rsplit('/', 1)
@@ -35,6 +36,7 @@ for n, (start, end) in enumerate(zip(sorted_offsets, sorted_offsets[1:])):
     xml_obj = Et.fromstringlist(["<root>", text, "</root>"])
     for page_obj in xml_obj.findall('page'):
         article_body = page_obj.find('revision').find('text').text
+        article_body = filter.strip_wiki(article_body)
         word = ''
         for ch in article_body:
             if ch.isalpha():

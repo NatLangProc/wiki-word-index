@@ -1,5 +1,6 @@
-import re
-import xml.etree.ElementTree
+#!/usr/bin/env python3
+
+import xml.etree.ElementTree as Et
 import csv
 import os
 from bz2 import BZ2Decompressor
@@ -8,6 +9,7 @@ from mysql.connector import connect
 from getpass import getpass
 import configparser
 import spacy as spacy
+import filter
 
 config = configparser.ConfigParser()
 config.read('wwi.ini')
@@ -196,41 +198,9 @@ def fetch_block_info(connection, number):
     return cursor.fetchone()
 
 
-def filter(text):
-    pattern = '<ref.*>.*</ref>'
-    text = re.sub(pattern, '', text)
-    pattern = '{{.*}}'
-    text = re.sub(pattern, '', text)
-    pattern = '\*\ \[\[.*\]\]'
-    text = re.sub(pattern, '', text)
-    pattern = '\[\[Kategoria.*\]\]'
-    text = re.sub(pattern, '', text)
-    pattern = '\n==.*'
-    text = re.sub(pattern, '', text)
-    pattern = r"(?i)\b((?:https?://|www\d{0,3}[.]|[a-z0-9.\-]+[.][a-z]{2,4}/)(?:[^\s()<>]+|\(([^\s()<>]+|(\([^\s()<>]+\)))*\))+(?:\(([^\s()<>]+|(\([^\s()<>]+\)))*\)|[^\s`!()\[\]{};:'\".,<>?«»“”‘’]))"
-    text = re.sub(pattern, '', text)
-    return text
-
-def clear(text):
-    result = ""
-    more = 0
-    for c in text:
-        if more > 0:
-            more -= 1
-        if c == '%':
-            more = 3
-        if c in ('_', '|', '/', ',', '&', '?', '-', '#', '+', ';', '<', '>', '{', '}', '=', '[', ']')\
-                or ord(c) in (806, 65040, 65104, 65292, 12289) \
-                or more > 0:
-            result += ' '
-        else:
-            result += c
-    return result
-
-
 def process(text):
     page_freq = dict()
-    doc = nlp(filter(text))
+    doc = nlp(filter.strip_wiki(text))
     for token in doc:
         if token.pos_ in 'SPACE':
             continue
@@ -261,7 +231,7 @@ def read_block(file, start, end):
     file.seek(start)
     data = file.read(end - start)
     data1 = decompressor.decompress(data)
-    xml_object = xml.etree.ElementTree.fromstringlist(["<root>", data1, "</root>"])
+    xml_object = Et.fromstringlist(["<root>", data1, "</root>"])
     pages = xml_object.findall('page')
     block_freq = dict()
     for k in pages:
