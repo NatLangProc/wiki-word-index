@@ -204,11 +204,14 @@ def process(text):
     for token in doc:
         if token.pos_ in 'SPACE':
             continue
-        if len(token.lemma_) > 100:
-            lemma = 'Long'+str(len(token.lemma_))+' '+token.lemma_[:20]
+        lemma = token.lemma_
+        n = lemma.find('|')
+        if n >= 0:
+            lemma = lemma[:n]
+        if len(lemma) > 100:
+            lemma = 'Long'+str(len(lemma))+' '+lemma[:20]
             pos = 'LONG'
         else:
-            lemma = token.lemma_
             pos = token.pos_
         idpos = dict_pos2id[pos]
         if (token.lemma, idpos) in page_freq:
