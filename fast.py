@@ -11,8 +11,7 @@ idx_filename = sys.argv[1]
 path_name = idx_filename.rsplit('/', 1)
 dat_filename = path_name[0]+'/'+path_name[1].replace('-index', '',).replace('txt', 'xml')
 
-timestamp = time.time()
-start_timestamp = timestamp
+start_timestamp = time.time()
 offsets = set()
 with bz2.open(idx_filename, mode='rt', encoding='UTF-8') as f:
     for line in f:
@@ -28,11 +27,7 @@ for n, (start, end) in enumerate(zip(sorted_offsets, sorted_offsets[1:])):
     if sum_words >= limit:
         break
     length = end - start
-    prev_timestamp = timestamp
-    timestamp = time.time()
-    print('{}/{}. {}-{}={}. time={:.3}s({}s). words={}. sum words={}. mem={}kB'.format(
-          n, total, end, start, length, timestamp-prev_timestamp,
-          int(timestamp-start_timestamp), len(word_count), sum_words/1e6, int(sys.getsizeof(word_count)/1024)))
+    start_block_timestamp = time.time()
     decompressor = bz2.BZ2Decompressor()
     f.seek(start)
     data = f.read(length)
@@ -48,6 +43,11 @@ for n, (start, end) in enumerate(zip(sorted_offsets, sorted_offsets[1:])):
                 word_count[word] += 1
                 sum_words += 1
                 word = ''
+    end_block_timestamp = time.time()
+    print('{}/{}. {}-{}={}. time={:.3}s({}s). words={}. sum words={} mln. mem={}kB'.format(
+          n, total, end, start, length, end_block_timestamp-start_block_timestamp,
+          int(end_block_timestamp-start_timestamp), len(word_count), sum_words/1e6, int(sys.getsizeof(word_count)/1024)))
+
 f.close()
 
 f = open(idx_filename+'.csv', mode='wt', encoding='UTF-8')
