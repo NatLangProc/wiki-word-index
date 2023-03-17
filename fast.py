@@ -23,13 +23,16 @@ sorted_offsets = sorted(offsets)
 total = len(sorted_offsets)
 word_count = collections.defaultdict(int)
 f = open(dat_filename, mode='rb')
+sum_words=0
 for n, (start, end) in enumerate(zip(sorted_offsets, sorted_offsets[1:])):
+    if sum_words>=100e6:
+        break
     length = end - start
     prev_timestamp = timestamp
     timestamp = time.time()
-    print('{}/{}. {}-{}={}. time={:.3}s({}s). words={}. mem={}kB'.format(
+    print('{}/{}. {}-{}={}. time={:.3}s({}s). words={}. sum words={}. mem={}kB'.format(
           n, total, end, start, length, timestamp-prev_timestamp,
-          int(timestamp-start_timestamp), len(word_count), int(sys.getsizeof(word_count)/1024)))
+          int(timestamp-start_timestamp), len(word_count), sum_words/1e6, int(sys.getsizeof(word_count)/1024)))
     decompressor = bz2.BZ2Decompressor()
     f.seek(start)
     data = f.read(length)
@@ -43,6 +46,7 @@ for n, (start, end) in enumerate(zip(sorted_offsets, sorted_offsets[1:])):
                 word += ch
             else:
                 word_count[word] += 1
+                sum_words+=1
                 word = ''
 f.close()
 
