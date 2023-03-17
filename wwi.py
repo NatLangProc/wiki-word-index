@@ -195,14 +195,19 @@ def fetch_block_info(connection, number):
     cursor.execute("SELECT start,end,processed FROM blocks where number=" + str(number))
     return cursor.fetchone()
 
+
 def filter(text):
     pattern = '<ref.*>.*</ref>'
     text = re.sub(pattern, '', text)
     pattern = '{{.*}}'
     text = re.sub(pattern, '', text)
-    pattern = '\[\[.*\]\]'
+    pattern = '\*\ \[\[.*\]\]'
+    text = re.sub(pattern, '', text)
+    pattern = '\[\[Kategoria.*\]\]'
     text = re.sub(pattern, '', text)
     pattern = '\n==.*'
+    text = re.sub(pattern, '', text)
+    pattern = r"(?i)\b((?:https?://|www\d{0,3}[.]|[a-z0-9.\-]+[.][a-z]{2,4}/)(?:[^\s()<>]+|\(([^\s()<>]+|(\([^\s()<>]+\)))*\))+(?:\(([^\s()<>]+|(\([^\s()<>]+\)))*\)|[^\s`!()\[\]{};:'\".,<>?«»“”‘’]))"
     text = re.sub(pattern, '', text)
     return text
 
@@ -225,7 +230,7 @@ def clear(text):
 
 def process(text):
     page_freq = dict()
-    doc = nlp(clear(filter(text)))
+    doc = nlp(filter(text))
     for token in doc:
         if token.pos_ in 'SPACE':
             continue
