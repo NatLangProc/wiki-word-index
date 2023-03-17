@@ -3,13 +3,12 @@
 import bz2
 import collections
 import csv
-import json
 import sys
 import time
-import xml.etree.ElementTree as et
+import xml.etree.ElementTree as Et
 
 idx_filename = sys.argv[1]
-path_name = idx_filename.rsplit('/',1)
+path_name = idx_filename.rsplit('/', 1)
 dat_filename = path_name[0]+'/'+path_name[1].replace('-index', '',).replace('txt', 'xml')
 
 timestamp = time.time()
@@ -23,9 +22,9 @@ sorted_offsets = sorted(offsets)
 total = len(sorted_offsets)
 word_count = collections.defaultdict(int)
 f = open(dat_filename, mode='rb')
-sum_words=0
+sum_words = 0
 for n, (start, end) in enumerate(zip(sorted_offsets, sorted_offsets[1:])):
-    if sum_words>=100e6:
+    if sum_words >= 100e6:
         break
     length = end - start
     prev_timestamp = timestamp
@@ -37,7 +36,7 @@ for n, (start, end) in enumerate(zip(sorted_offsets, sorted_offsets[1:])):
     f.seek(start)
     data = f.read(length)
     text = decompressor.decompress(data).decode('UTF-8')
-    xml_obj = et.fromstringlist(["<root>", text, "</root>"])
+    xml_obj = Et.fromstringlist(["<root>", text, "</root>"])
     for page_obj in xml_obj.findall('page'):
         article_body = page_obj.find('revision').find('text').text
         word = ''
@@ -46,12 +45,12 @@ for n, (start, end) in enumerate(zip(sorted_offsets, sorted_offsets[1:])):
                 word += ch
             else:
                 word_count[word] += 1
-                sum_words+=1
+                sum_words += 1
                 word = ''
 f.close()
 
 f = open(idx_filename+'.csv', mode='wt', encoding='UTF-8')
-word_count_l = sorted(word_count.items(), key=lambda item: item[1],reverse=True)
+word_count_l = sorted(word_count.items(), key=lambda item: item[1], reverse=True)
 writer = csv.DictWriter(f, fieldnames=['count', 'word'])
 writer.writeheader()
 for w, c in word_count_l:
