@@ -47,8 +47,9 @@ for n, (start, end) in enumerate(zip(sorted_offsets, sorted_offsets[1:])):
 f.close()
 
 f = open(idx_filename+'.csv', mode='wt', encoding='UTF-8')
+word_count_l = sorted(word_count.items(), key=lambda item: item[1],reverse=True)
 writer = csv.DictWriter(f, fieldnames=['count', 'word'])
 writer.writeheader()
-for w, c in word_count.items():
+for w, c in word_count_l:
     writer.writerow({'word': w, 'count': c})
 f.close()
