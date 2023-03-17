@@ -23,7 +23,7 @@ def strip_templates(input_text):
 
 def strip_wiki(input_text):
     output_text = strip_templates(input_text)
-    output_text = re.sub('(<!--(.)*-->)|(\[\[.*:.*\]\])|(<ref.*>.*</ref>)', '', output_text)
+    output_text = re.sub('(<!--(.)*-->)|(\[\[.*:.*\]\])|(<.*>.*</.*>)', '', output_text)
     pattern = r"(?i)\b((?:https?://|www\d{0,3}[.]|[a-z0-9.\-]+[.][a-z]{2,4}/)(?:[^\s()<>]+|\(([^\s()<>]+|(\([^\s()<>]+\)))*\))+(?:\(([^\s()<>]+|(\([^\s()<>]+\)))*\)|[^\s`!()\[\]{};:'\".,<>?«»“”‘’]))"
     output_text = re.sub(pattern, '', output_text)
     return output_text
