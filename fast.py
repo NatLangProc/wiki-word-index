@@ -16,7 +16,8 @@ POLISH_LETTERS = ['a', 'ą', 'b', 'c', 'ć', 'd', 'e', 'ę', 'f', 'g', 'h', 'i',
                   'P', 'Q', 'R', 'S', 'Ś', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z', 'Ź', 'Ż']
 
 idx_filename = sys.argv[1]
-dat_filename = idx_filename.replace('-index', '').replace('txt', 'xml')
+path_name = idx_filename.rsplit('/',1)
+dat_filename = path_name[0]+'/'+path_name[1].replace('-index', '',).replace('txt', 'xml')
 
 timestamp = time.time()
 start_timestamp = timestamp
