@@ -5,9 +5,11 @@ import collections
 import csv
 import sys
 import time
+import tracemalloc
 import xml.etree.ElementTree as Et
 import filter
 
+tracemalloc.start()
 idx_filename = sys.argv[1]
 path_name = idx_filename.rsplit('/', 1)
 dat_filename = path_name[0]+'/'+path_name[1].replace('-index', '',).replace('txt', 'xml')
@@ -49,10 +51,10 @@ for n, (start, end) in enumerate(zip(sorted_offsets, sorted_offsets[1:])):
         if len(word) > 0:
             word_count[word] += 1
     end_block_timestamp = time.time()
-    print('{}/{}. {}-{}={}. time={:.3}s({}s). words={}. sum words={} mln. mem={}kB'.format(
+    print('{}/{}. {}-{}={}. time={:.3}s({}s). words={}. sum words={:.2} mln. mem={}MiB'.format(
           n, total, end, start, length, end_block_timestamp-start_block_timestamp,
           int(end_block_timestamp-start_timestamp), len(word_count), sum_words/1e6,
-          int(sys.getsizeof(word_count)/1024)))
+          int(tracemalloc.get_traced_memory()[0] / 1024 ** 2)))
 
 f.close()
 
@@ -63,3 +65,4 @@ writer.writeheader()
 for w, c in word_count_l:
     writer.writerow({'word': w, 'count': c})
 f.close()
+tracemalloc.stop()
