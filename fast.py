@@ -20,7 +20,7 @@ def process_one_article(article_body, word_count,sum_words, limit):
                 word_count[word] += 1
             sum_words += 1
             word = ''
-            if sum_words >= limit:
+            if limit>0 and sum_words >= limit:
                 break
     if len(word) > 0:
         word_count[word] += 1
@@ -38,7 +38,7 @@ def process_one_block(text, word_count, sum_words, limit):
     for page_obj in xml_obj.findall('page'):
         article_body = page_obj.find('revision').find('text').text
         sum_words = process_one_article(article_body, word_count, sum_words, limit)
-        if sum_words >= limit:
+        if limit>0 and sum_words >= limit:
             break
     return sum_words
 def read_index(idx_filename):
@@ -68,16 +68,14 @@ def process_wiki(idx_filename,dat_filename):
         data = f.read(length)
         text = decompressor.decompress(data).decode('UTF-8')
         sum_words = process_one_block(text, word_count, sum_words, limit)
-        if sum_words >= limit:
-            break
         end_block_timestamp = time.time()
-        print('{}/{}. {}-{}={}. time={:.3}s({}s). words={}. sum words={:.2} mln. mem={}MiB'.format(
+        print('{}/{}. {}-{}={}. time={:.3}s({}s). words={}. sum words={:.3} mln. mem={}MiB'.format(
             n, total, end, start, length, end_block_timestamp - start_block_timestamp,
             int(end_block_timestamp - start_timestamp), len(word_count), sum_words / 1e6,
             int(tracemalloc.get_traced_memory()[0] / 1024 ** 2)))
-
+        if limit>0 and sum_words >= limit:
+            break
     f.close()
-
     f = open(idx_filename + '.csv', mode='wt', encoding='UTF-8')
     word_count_l = sorted(word_count.items(), key=lambda item: item[1], reverse=True)
     writer = csv.DictWriter(f, fieldnames=['count', 'word'])
