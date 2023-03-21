@@ -10,6 +10,8 @@ import xml.etree.ElementTree as Et
 import filter
 
 def process_one_article(article_body, word_count,sum_words, limit):
+    if not article_body:
+        return sum_words
     article_body = filter.strip_wiki(article_body)
     word = ''
     for ch in article_body:
