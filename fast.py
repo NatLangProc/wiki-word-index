@@ -33,7 +33,7 @@ def process_one_article_file(filename):
     word_count = collections.defaultdict(int)
     with open(filename, "r") as f:
         article_body = f.read()
-    sum_words = process_one_article(article_body,word_count)
+    sum_words = process_one_article(article_body,word_count,0,0)
 
 def process_one_block(text, word_count, sum_words, limit):
     xml_obj = Et.fromstringlist(["<root>", text, "</root>"])
