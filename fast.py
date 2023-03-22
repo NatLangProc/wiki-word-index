@@ -15,7 +15,7 @@ def process_one_article(article_body, word_count,sum_words):
     article_body = filter.strip_wiki(article_body)
     word = ''
     for ch in article_body:
-        if ch.isalpha():
+        if ch.isalnum() or ch=="'":
             word += ch
         else:
             if len(word) > 0:
