@@ -9,7 +9,7 @@ import tracemalloc
 import xml.etree.ElementTree as Et
 import filter
 
-def process_one_article(article_body, word_count,sum_words, limit):
+def process_one_article(article_body, word_count,sum_words):
     if not article_body:
         return sum_words
     article_body = filter.strip_wiki(article_body)
@@ -22,8 +22,6 @@ def process_one_article(article_body, word_count,sum_words, limit):
                 word_count[word] += 1
             sum_words += 1
             word = ''
-            if limit>0 and sum_words >= limit:
-                break
     if len(word) > 0:
         word_count[word] += 1
     return sum_words
@@ -33,13 +31,13 @@ def process_one_article_file(filename):
     word_count = collections.defaultdict(int)
     with open(filename, "r") as f:
         article_body = f.read()
-    sum_words = process_one_article(article_body,word_count,0,0)
+    sum_words = process_one_article(article_body,word_count,0)
 
 def process_one_block(text, word_count, sum_words, limit):
     xml_obj = Et.fromstringlist(["<root>", text, "</root>"])
     for page_obj in xml_obj.findall('page'):
         article_body = page_obj.find('revision').find('text').text
-        sum_words = process_one_article(article_body, word_count, sum_words, limit)
+        sum_words = process_one_article(article_body, word_count, sum_words)
         if limit>0 and sum_words >= limit:
             break
     return sum_words
